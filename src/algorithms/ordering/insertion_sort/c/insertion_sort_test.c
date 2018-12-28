@@ -67,6 +67,8 @@ int tests_run = 0;
 
 int main() {
     char *result = all_tests();
+
+    printf("insertion_sort_test.c\n");
     if (result != 0) {
         printf("%s\n", result);
     } else {
