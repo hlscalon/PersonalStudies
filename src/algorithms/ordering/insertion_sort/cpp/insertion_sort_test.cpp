@@ -56,7 +56,7 @@ int tests_run = 0;
 int main() {
     char *result = all_tests();
 
-    std::cout << "insertion_sort_test.c\n";
+    std::cout << "insertion_sort_test.cpp\n";
     if (result != 0) {
         std::cout << result << "\n";
     } else {
