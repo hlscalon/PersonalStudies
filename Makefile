@@ -1,6 +1,7 @@
 BUILD_DIR = ./build
 SRC_DIRS = ./src
 TARGET_EXEC = a.out
+DEBUG = -g
 
 SRCS := $(shell find $(SRC_DIRS) -iname *.cpp -or -iname *.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
@@ -14,7 +15,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS = $(INC_FLAGS) -MMD -MP
 CXXFLAGS = -Wall -O3 -std=c++17
-CFLAGS = -Wall -O3 -std=c99
+CFLAGS = -Wall -O3 -std=c99 $(DEBUG)
 
 all: $(TARGET_TEST_C) $(TARGET_TEST_CXX)
 
