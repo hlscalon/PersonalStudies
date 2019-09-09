@@ -12,9 +12,16 @@ Node * rb_create_node(int value) {
     return x;
 }
 
-void rb_insert(Node * T, Node * z) {
+Tree * rb_create_tree() {
+	Tree * T = malloc(sizeof(Tree));
+	T->root = NULL;
+
+	return T;
+}
+
+void rb_insert(Tree * T, Node * z) {
 	Node * y = NULL;
-	Node * x = T;
+	Node * x = T->root;
 	while (x != NULL) {
 		y = x;
 		if (z->value < x->value) {
@@ -26,7 +33,7 @@ void rb_insert(Node * T, Node * z) {
 
 	z->parent = y;
 	if (y == NULL) {
-		T = z;
+		T->root = z;
 	} else if (z->value < y->value) {
 		y->left = z;
 	} else {
@@ -40,9 +47,9 @@ void rb_insert(Node * T, Node * z) {
 	rb_insert_fixup(T, z);
 }
 
-void rb_insert_fixup(Node * T, Node * z) {
+void rb_insert_fixup(Tree * T, Node * z) {
 	Node * y = NULL;
-	while (z->parent->color == RED) {
+	while (z != NULL && z->parent != NULL && z->parent->color == RED && z->parent->parent != NULL) {
 		if (z->parent == z->parent->parent->left) {
 			y = z->parent->parent->right;
 			if (y != NULL && y->color == RED) {
@@ -59,29 +66,27 @@ void rb_insert_fixup(Node * T, Node * z) {
 				rb_right_rotate(T, z->parent->parent);
 			}
 		} else {
-			if (z->parent == z->parent->parent->right) {
-				y = z->parent->parent->left;
-				if (y != NULL && y->color == RED) {
-					z->parent->color = BLACK;
-					y->color = BLACK;
-					z->parent->parent->color = RED;
-					z = z->parent->parent;
-				} else if (z == z->parent->left) {
-					z = z->parent;
-					rb_right_rotate(T, z);
-				} else {
-					z->parent->color = BLACK;
-					z->parent->parent->color = RED;
-					rb_left_rotate(T, z->parent->parent);
-				}
+			y = z->parent->parent->left;
+			if (y != NULL && y->color == RED) {
+				z->parent->color = BLACK;
+				y->color = BLACK;
+				z->parent->parent->color = RED;
+				z = z->parent->parent;
+			} else if (z == z->parent->left) {
+				z = z->parent;
+				rb_right_rotate(T, z);
+			} else {
+				z->parent->color = BLACK;
+				z->parent->parent->color = RED;
+				rb_left_rotate(T, z->parent->parent);
 			}
 		}
 	}
 
-	T->color = BLACK;
+	T->root->color = BLACK;
 }
 
-void rb_left_rotate(Node * T, Node * x) {
+void rb_left_rotate(Tree * T, Node * x) {
 	Node * y = x->right;
 	x->right = y->left;
 	if (y->left != NULL) {
@@ -90,7 +95,7 @@ void rb_left_rotate(Node * T, Node * x) {
 
 	y->parent = x->parent;
 	if (x->parent == NULL) {
-		T = y;
+		T->root = y;
 	} else if (x == x->parent->left) {
 		x->parent->left = y;
 	} else {
@@ -101,7 +106,7 @@ void rb_left_rotate(Node * T, Node * x) {
 	x->parent = y;
 }
 
-void rb_right_rotate(Node * T, Node * x) {
+void rb_right_rotate(Tree * T, Node * x) {
 	Node * y = x->left;
 	x->left = y->right;
 	if (y->right != NULL) {
@@ -110,7 +115,7 @@ void rb_right_rotate(Node * T, Node * x) {
 
 	y->parent = x->parent;
 	if (x->parent == NULL) {
-		T = y;
+		T->root = y;
 	} else if (x == x->parent->left) {
 		x->parent->left = y;
 	} else {
@@ -121,8 +126,8 @@ void rb_right_rotate(Node * T, Node * x) {
 	x->parent = y;
 }
 
-Node * rb_search(Node * T, int value) {
-	Node * x = T;
+Node * rb_search(Tree * T, int value) {
+	Node * x = T->root;
 	while (x != NULL && value != x->value) {
 		if (value < x->value) {
 			x = x->left;

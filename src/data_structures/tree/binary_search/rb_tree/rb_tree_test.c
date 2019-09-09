@@ -5,11 +5,8 @@
 #include "rb_tree.h"
 #include "MinUnit/minunit.h"
 
-static char * test_rb_tree_search_found() {
-    Node * T = rb_create_node(15);
-
-    Node * n1 = rb_create_node(7);
-    rb_insert(T, n1);
+static char * test_rb_tree_search() {
+    Tree * T = rb_create_tree();
 
     Node * n2 = rb_create_node(11);
     rb_insert(T, n2);
@@ -19,6 +16,9 @@ static char * test_rb_tree_search_found() {
 
     Node * n4 = rb_create_node(2);
     rb_insert(T, n4);
+
+    Node * n1 = rb_create_node(7);
+    rb_insert(T, n1);
 
     Node * n5 = rb_create_node(5);
     rb_insert(T, n5);
@@ -32,21 +32,31 @@ static char * test_rb_tree_search_found() {
     Node * n8 = rb_create_node(4);
     rb_insert(T, n8);
 
-    // rb_print(T);
+    Node * n9 = rb_create_node(15);
+    rb_insert(T, n9);
 
-    Node * x = rb_search(T, 5);
+    Node * x = rb_search(T, 50);
     int found = x != NULL;
 
-    free(n8); free(n7); free(n6);
-    free(n5); free(n4); free(n3); free(n2);
-    free(n1); free(T);
+    mu_assert("error, test_rb_tree_search -> found 50", !found);
 
-    mu_assert("error, test_rb_tree_search_found -> not found", !found);
+    x = rb_search(T, 4);
+    found = x != NULL;
+
+    mu_assert("error, test_rb_tree_search -> not found 4", found);
+
+    mu_assert("error, test_rb_tree_search -> T root not equal 7", T->root->value == 7);
+
+    free(n9);
+    free(n8); free(n7); free(n6);
+    free(n5); free(n4); free(n3);
+    free(n2); free(n1); free(T);
+
     return 0;
 }
 
 static char * all_tests() {
-    mu_run_test(test_rb_tree_search_found);
+    mu_run_test(test_rb_tree_search);
     return 0;
 }
 
