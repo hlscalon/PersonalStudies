@@ -35,9 +35,11 @@ void rb_insert(Tree * T, Node * z);
 void rb_insert_fixup(Tree * T, Node * z);
 void rb_transplant(Tree * T, Node * u, Node * z);
 void rb_delete(Tree * T, Node * z);
+void rb_delete_fixup(Tree * T, Node * x);
 void rb_print(Node * x);
 Node * rb_search(Tree * T, int value);
 Node * rb_create_node(int value);
 Tree * rb_create_tree();
+Node * rb_tree_minimum(Node * x);
 
 #endif  // RB_TREE_H

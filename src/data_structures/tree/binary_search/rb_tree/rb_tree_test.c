@@ -44,8 +44,19 @@ static char * test_rb_tree_search() {
     found = x != NULL;
 
     mu_assert("error, test_rb_tree_search -> not found 4", found);
-
     mu_assert("error, test_rb_tree_search -> T root not equal 7", T->root->value == 7);
+
+    rb_delete(T, n6); // 8
+
+    printf("Printing tree...\n");
+    rb_print(T->root);
+    printf("Finished successfully\n");
+
+    // root keeps 7
+    mu_assert("error, test_rb_tree_search -> T root not equal 7", T->root->value == 7);
+
+    // root's right descendant is now 14
+    mu_assert("error, test_rb_tree_search -> T root descendant not equal 14", T->root->right->value == 14);
 
     free(n9);
     free(n8); free(n7); free(n6);

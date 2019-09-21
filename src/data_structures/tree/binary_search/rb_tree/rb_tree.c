@@ -142,8 +142,163 @@ Node * rb_search(Tree * T, int value) {
 void rb_print(Node * x) {
 	if (x == NULL) return;
 
-	printf("Node = %d\n", x->value);
+	printf("Node = %d", x->value);
+	if (x->parent != NULL) {
+		printf(" -> Parent = %d", x->parent->value);
+	}
+
+	printf("\n");
 
 	rb_print(x->left);
 	rb_print(x->right);
+}
+
+void rb_transplant(Tree * T, Node * u, Node * v) {
+	if (u->parent == NULL) {
+		T->root = v;
+	} else if (u == u->parent->left) {
+		u->parent->left = v;
+	} else {
+		u->parent->right = v;
+	}
+
+	if (v != NULL) {
+		v->parent = u->parent;
+	}
+}
+
+Node * rb_tree_minimum(Node * n) {
+	if (n == NULL) {
+		return NULL;
+	}
+
+	Node * x = n;
+	while (x->left != NULL) {
+		x = x->left;
+	}
+
+	return x;
+}
+
+void rb_delete_fixup(Tree * T, Node * x) {
+	if (x == NULL) {
+		return;
+	}
+
+	Node * w;
+	while (x != NULL && x != T->root && x->color == BLACK) {
+		if (x == x->parent->left) {
+			w = x->parent->right;
+
+			if (w->color == RED) {
+				w->color = BLACK;
+				x->parent->color = RED;
+
+				rb_left_rotate(T, x->parent);
+				w = x->parent->right;
+			}
+
+			if (w->right != NULL) {
+				if (w->left != NULL && w->left->color == BLACK && w->right->color == BLACK) {
+					w->color = RED;
+					x = x->parent;
+				} else if (w->right->color == BLACK) {
+					if (w->left != NULL) {
+						w->left->color = BLACK;
+					}
+
+					w->color = RED;
+
+					rb_right_rotate(T, w);
+					w = x->parent->right;
+					w->color = x->parent->color;
+					x->parent->color = BLACK;
+				}
+
+				w->right->color = BLACK;
+				rb_left_rotate(T, x->parent);
+				x = T->root;
+			}
+		} else {
+			w = x->parent->left;
+
+			if (w->color == RED) {
+				w->color = BLACK;
+				x->parent->color = RED;
+
+				rb_right_rotate(T, x->parent);
+				w = x->parent->left;
+			}
+
+			if (w->left != NULL) {
+				if (w->right != NULL && w->right->color == BLACK && w->left->color == BLACK) {
+					w->color = RED;
+					x = x->parent;
+				} else if (w->left->color == BLACK) {
+					if (w->right != NULL) {
+						w->right->color = BLACK;
+					}
+
+					w->color = RED;
+
+					rb_left_rotate(T, w);
+					w = x->parent->left;
+					w->color = x->parent->color;
+					x->parent->color = BLACK;
+				}
+
+				w->left->color = BLACK;
+				rb_right_rotate(T, x->parent);
+				x = T->root;
+			}
+		}
+	}
+
+	if (x != NULL) {
+		x->color = BLACK;
+	}
+}
+
+void rb_delete(Tree * T, Node * z) {
+	if (z == NULL) {
+		return;
+	}
+
+	Node * y = z;
+	Color y_original_color = y->color;
+	Node * x;
+
+	if (z->left == NULL) {
+		x = z->right;
+		rb_transplant(T, z, z->right);
+	} else if (z->right == NULL) {
+		x = z->left;
+		rb_transplant(T, z, z->left);
+	} else {
+		y = rb_tree_minimum(z->right);
+		if (y == NULL) {
+			return;
+		}
+
+		y_original_color = y->color;
+		x = y->right;
+		if (y->parent == z) {
+			x->parent = y;
+		} else {
+			rb_transplant(T, y, y->right);
+			y->right = z->right;
+			y->right->parent = y;
+		}
+
+		rb_transplant(T, z, y);
+		y->left = z->left;
+		y->left->parent = y;
+		y->color = z->color;
+	}
+
+	if (y_original_color == BLACK) {
+		rb_delete_fixup(T, x);
+	}
+
+	// free(z)
 }
