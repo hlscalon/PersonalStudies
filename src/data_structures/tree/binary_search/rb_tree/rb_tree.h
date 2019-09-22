@@ -25,6 +25,7 @@ struct Node_s {
 
 struct Tree_s {
     Node * root;
+    Node * nil;
 };
 
 typedef struct Tree_s Tree;
@@ -36,10 +37,10 @@ void rb_insert_fixup(Tree * T, Node * z);
 void rb_transplant(Tree * T, Node * u, Node * z);
 void rb_delete(Tree * T, Node * z);
 void rb_delete_fixup(Tree * T, Node * x);
-void rb_print(Node * x);
+void rb_print(Tree * T, Node * x);
 Node * rb_search(Tree * T, int value);
-Node * rb_create_node(int value);
+Node * rb_create_node(int value, Node * nil);
 Tree * rb_create_tree();
-Node * rb_tree_minimum(Node * x);
+Node * rb_tree_minimum(Tree * T, Node * n);
 
 #endif  // RB_TREE_H
